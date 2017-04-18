@@ -21,6 +21,10 @@
 			border-radius: 5px;
 			margin: 25px;
 		}
+		canvas{
+			border:1pt solid #000;
+			margin: 25px;
+		}
 		.comment{
 			color:#909090;
 		}
@@ -51,6 +55,58 @@
 				<line class="comment">// == "[(0,0)-->(0,1)-->(2,1)-->(2,0)-->(0,0)]"</line>
 			</div>
 			This goes to show that Outline doesn't remember the fact that this represents a rectangle, but only the vertices and the fact that they're connected.
+		</p>
+		<p>
+			Once we have an outline, we can do several things with it. One is to draw it on a <span class="inline-code">canvas</span>:
+			<div class="code">
+				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
+				<line class="comment">// we need a bigger rectangle</line>
+				<line>rectangle = rectangle.scale(100);</line>
+				<line> </line>
+				<line class="invisible">var canvas = document.getElementById("canvas1");</line>
+				<line class="invisible">var context = canvas.getContext("2d");</line>
+				<line class="invisible">context.strokeStyle = '#000';</line>
+				<line class="comment">// supposing we already have a CanvasRenderingContext called 'context'</line>
+				<line>rectangle.makeCanvasPaths(context, function(){</line>
+				<line class="comment">	// code that is called each time a part of the outline is complete</line>
+				<line>	context.stroke();</line>
+				<line>});</line>
+			</div>
+			Unsurprisingly, the result of this looks as follows:<br/>
+			<canvas id="canvas1" width="300" height="300"></canvas>
+		</p>
+		<p>
+			It becomes a little bit more interesting when we begin to combine several outlines to make a new outline. Suppose we take a another rectangle:
+			<div class="code">
+				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
+				<line class="invisible">rectangle = rectangle.scale(100);</line>
+				<line>var rectangle2 = outline.rectangle(100,50,200,200);</line>
+				<line class="invisible">var canvas = document.getElementById("canvas2");</line>
+				<line class="invisible">var context = canvas.getContext("2d");</line>
+				<line class="invisible">context.strokeStyle = '#000';</line>
+				<line class="invisible">rectangle.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">context.strokeStyle = '#0f0';</line>
+				<line class="invisible">rectangle2.makeCanvasPaths(context,function(){context.stroke();});</line>
+			</div>
+			This new rectangle (a square, actually) is located here:<br/>
+			<canvas id="canvas2" width="300" height="300"></canvas><br/>
+			Now suppose we combine <span class="inline-code">rectangle</span> and <span class="inline-code">rectangle2</span> in the following way:
+			<div class="code">
+				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
+				<line class="invisible">rectangle = rectangle.scale(100);</line>
+				<line class="invisible">var rectangle2 = outline.rectangle(100,50,200,200);</line>
+				<line>var combination = rectangle.combine(rectangle2);</line>
+				<line> </line>
+				<line class="comment">/* the result is a new outline, the string representation of which is</line>
+				<line class="comment">"[(100,100)-->(100,250)-->(300,250)-->(300,50)-->(200,50)--></line>
+				<line class="comment">(200,0)-->(0,0)-->(0,100)-->(100,100)]" */</line>
+				<line class="invisible">var canvas = document.getElementById("canvas3");</line>
+				<line class="invisible">var context = canvas.getContext("2d");</line>
+				<line class="invisible">context.strokeStyle = '#000';</line>
+				<line class="invisible">combination.makeCanvasPaths(context,function(){context.stroke();});</line>
+			</div>
+			If we draw this in a canvas, we see that the new outline looks like this:<br/>
+			<canvas id="canvas3" width="300" height="300"></canvas>
 		</p>
 	</div>
 	
