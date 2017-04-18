@@ -1,0 +1,78 @@
+<html>
+<head>
+	<style type="text/css">
+		body{
+			color:#222;
+			font-family: Verdana;
+			font-size:14px;
+		}
+		div{
+			max-width: 700px;
+			margin: auto;
+		}
+		.inline-code{
+			font-family: monospace;
+		}
+		.code{
+			font-family: monospace;
+			background-color: #f0f0f0;
+			border: 1pt solid #a0a0a0;
+			padding: 10px;
+			border-radius: 5px;
+			margin: 25px;
+		}
+		.comment{
+			color:#909090;
+		}
+		.invisible{
+			display: none;
+		}
+		line{
+			display: block;
+			white-space: pre;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<h2>outline.js</h2>
+		<p>
+			Outline is a library for creating and combining outlines of polygons.
+		</p>
+		<p>
+			An example of a polygon is a rectangle with one vertex at (0,0), a width of 2 and a height of 1. Outline has the following way of talking about such a rectangle:
+			<div class="code">
+				<line>var rectangle = outline.rectangle(0,0,2,1);</line>
+			</div>
+			The variable <span class="inline-code">rectangle</span> now contains an outline. The string representation of this outline is as follows:
+			<div class="code">
+				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
+				<line>rectangle.toString();</line>
+				<line class="comment">// == "[(0,0)-->(0,1)-->(2,1)-->(2,0)-->(0,0)]"</line>
+			</div>
+			This goes to show that Outline doesn't remember the fact that this represents a rectangle, but only the vertices and the fact that they're connected.
+		</p>
+	</div>
+	
+</body>
+<script src="outlineTest.js"></script>
+<script src="outline.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+	(function($){
+		window.outlineTest(function(e){console.error(e);}, function(s){console.info(s);});
+		var evaluateCode = function(t){
+			var f = new Function(t);
+			f.apply(null);
+		};
+		var codes = $(".code");
+		codes.each(function(){
+			var lines = $("line", this).toArray().map(function(e){
+				var $e = $(e);
+				return $e.text()+"\r\n";
+			}).join("");
+			evaluateCode(lines);
+		});
+	})(jQuery);
+</script>
+</html>
