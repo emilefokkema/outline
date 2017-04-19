@@ -43,14 +43,14 @@
 		<p>
 			Outline is a library for creating and combining outlines of polygons.
 		</p>
+		<h3>An outline</h3>
 		<p>
 			An example of a polygon is a rectangle with one vertex at (0,0), a width of 2 and a height of 1. Outline has the following way of talking about such a rectangle:
-			<div class="code">
+			<div class="code" data-contextid="1">
 				<line>var rectangle = outline.rectangle(0,0,2,1);</line>
 			</div>
 			The variable <span class="inline-code">rectangle</span> now contains an outline. The string representation of this outline is as follows:
-			<div class="code">
-				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
+			<div class="code" data-contextid="1">
 				<line>rectangle.toString();</line>
 				<line class="comment">// == "[(0,0)-->(0,1)-->(2,1)-->(2,0)-->(0,0)]"</line>
 			</div>
@@ -58,55 +58,110 @@
 		</p>
 		<p>
 			Once we have an outline, we can do several things with it. One is to draw it on a <span class="inline-code">canvas</span>:
-			<div class="code">
-				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
+			<div class="code" data-contextid="1">
 				<line class="comment">// we need a bigger rectangle</line>
 				<line>rectangle = rectangle.scale(100);</line>
 				<line> </line>
-				<line class="invisible">var canvas = document.getElementById("canvas1");</line>
-				<line class="invisible">var context = canvas.getContext("2d");</line>
-				<line class="invisible">context.strokeStyle = '#000';</line>
+				<line class="invisible">inCanvas("canvas1",function(context){</line>
 				<line class="comment">// supposing we already have a CanvasRenderingContext called 'context'</line>
 				<line>rectangle.makeCanvasPaths(context, function(){</line>
 				<line class="comment">	// code that is called each time a part of the outline is complete</line>
 				<line>	context.stroke();</line>
 				<line>});</line>
+				<line class="invisible">});</line>
 			</div>
 			Unsurprisingly, the result of this looks as follows:<br/>
 			<canvas id="canvas1" width="300" height="300"></canvas>
 		</p>
+		<h3>Combining outlines</h3>
 		<p>
 			It becomes a little bit more interesting when we begin to combine several outlines to make a new outline. Suppose we take another rectangle:
-			<div class="code">
-				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
-				<line class="invisible">rectangle = rectangle.scale(100);</line>
+			<div class="code" data-contextid="1">
 				<line>var rectangle2 = outline.rectangle(100,50,200,200);</line>
-				<line class="invisible">var canvas = document.getElementById("canvas2");</line>
-				<line class="invisible">var context = canvas.getContext("2d");</line>
-				<line class="invisible">context.strokeStyle = '#000';</line>
-				<line class="invisible">rectangle.makeCanvasPaths(context,function(){context.stroke();});</line>
-				<line class="invisible">context.strokeStyle = '#0f0';</line>
-				<line class="invisible">rectangle2.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">inCanvas("canvas2", function(context){</line>
+				<line class="invisible">	rectangle.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">	context.strokeStyle = '#0f0';</line>
+				<line class="invisible">	rectangle2.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">});</line>
 			</div>
 			This new rectangle (a square, actually) is located here:<br/>
 			<canvas id="canvas2" width="300" height="300"></canvas><br/>
 			Now suppose we combine <span class="inline-code">rectangle</span> and <span class="inline-code">rectangle2</span> in the following way:
-			<div class="code">
-				<line class="invisible">var rectangle = outline.rectangle(0,0,2,1);</line>
-				<line class="invisible">rectangle = rectangle.scale(100);</line>
-				<line class="invisible">var rectangle2 = outline.rectangle(100,50,200,200);</line>
+			<div class="code" data-contextid="1">
 				<line>var combination = rectangle.combine(rectangle2);</line>
 				<line> </line>
 				<line class="comment">/* the result is a new outline, the string representation of which is</line>
 				<line class="comment">"[(100,100)-->(100,250)-->(300,250)-->(300,50)-->(200,50)--></line>
 				<line class="comment">(200,0)-->(0,0)-->(0,100)-->(100,100)]" */</line>
-				<line class="invisible">var canvas = document.getElementById("canvas3");</line>
-				<line class="invisible">var context = canvas.getContext("2d");</line>
-				<line class="invisible">context.strokeStyle = '#000';</line>
-				<line class="invisible">combination.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">inCanvas("canvas3", function(context){</line>
+				<line class="invisible">	combination.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">});</line>
 			</div>
 			If we draw this in a canvas, we see that the new outline looks like this:<br/>
 			<canvas id="canvas3" width="300" height="300"></canvas><br/>
+			But we could also have combined <span class="inline-code">rectangle</span> and <span class="inline-code">rectangle2</span> in a different way:
+			<div class="code" data-contextid="1">
+				<line>var combination = rectangle.combineNegative(rectangle2);</line>
+				<line class="invisible">inCanvas("canvas4", function(context){</line>
+				<line class="invisible">	combination.makeCanvasPaths(context,function(){context.stroke();});</line>
+				<line class="invisible">});</line>
+			</div>
+			Now the second outline is so to speak subtracted from the first like this:<br/>
+			<canvas id="canvas4" width="300" height="300"></canvas><br/>
+		</p>
+		<h3>Filling outlines</h3>
+		<p>
+			Now suppose we have two outlines, a big one and a small one, and we "subtract" the smaller one from the bigger one.
+			<div class="code" data-contextid="2">
+				<line>var bigOne = outline.rectangle(0,0,200,200);</line>
+				<line>var smallOne = outline.rectangle(150,50,100,100);</line>
+				<line> </line>
+				<line>var difference = bigOne.combineNegative(smallOne);</line>
+			</div>
+			Now we could draw this on a canvas and fill it red this way:
+			<div class="code" data-contextid="2">
+				<line  class="invisible">inCanvas("canvas5", function(context){</line>
+				<line class="comment">// supposing we already have a CanvasRenderingContext called 'context'</line>
+				<line>context.strokeStyle = '#000';</line>
+				<line>context.fillStyle = '#f00';</line>
+				<line>difference.makeCanvasPaths(context, function(){</line>
+				<line>	context.fill();</line>
+				<line>	context.stroke();</line>
+				<line>});</line>
+				<line  class="invisible">});</line>
+			</div>
+			Which of course looks like this:<br/>
+			<canvas id="canvas5" width="300" height="300"></canvas><br/>
+			But suppose we move the smaller one a little bit to the left to that it is completely surrounded by the bigger one:
+			<div class="code" data-contextid="2">
+				<line>smallOne = smallOne.translate(-100,0);</line>
+			</div>
+			And suppose we then recompute the difference and draw it in exactly the same way:
+			<div class="code" data-contextid="2">
+				<line>difference = bigOne.combineNegative(smallOne);</line>
+				<line  class="invisible">inCanvas("canvas6", function(context){</line>
+				<line class="invisible">context.strokeStyle = '#000';</line>
+				<line class="invisible">context.fillStyle = '#f00';</line>
+				<line class="invisible">difference.makeCanvasPaths(context, function(){context.fill();context.stroke();});});</line>
+			</div>
+			Then it will look like this:<br/>
+			<canvas id="canvas6" width="300" height="300"></canvas><br/>
+			To address this, there is a variation on <span class="inline-code">makeCanvasPaths</span> called <span class="inline-code">makeHolelessCanvasPaths</span>, which we would, in this case, use as follows:
+			<div class="code" data-contextid="2">
+				<line  class="invisible">inCanvas("canvas7",function(context){</line>
+				<line class="comment">// supposing we already have a CanvasRenderingContext called 'context'</line>
+				<line>context.strokeStyle = '#000';</line>
+				<line>context.fillStyle = '#f00';</line>
+				<line>difference.makeHolelessCanvasPaths(context, function(){</line>
+				<line>	context.fill();</line>
+				<line>});</line>
+				<line>difference.makeCanvasPaths(context, function(){</line>
+				<line>	context.stroke();</line>
+				<line>});</line>
+				<line  class="invisible">});</line>
+			</div>
+			And now it looks as expected:<br/>
+			<canvas id="canvas7" width="300" height="300"></canvas><br/>
 		</p>
 		<p>See this code in action on JSFiddle <a href="https://jsfiddle.net/dupxc1oy/3/">here</a>.</p>
 	</div>
@@ -118,17 +173,40 @@
 <script>
 	(function($){
 		window.outlineTest(function(e){console.error(e);}, function(s){console.info(s);});
-		var evaluateCode = function(t){
-			var f = new Function(t);
-			f.apply(null);
+		var inCanvas = function(canvasId, f){
+			var canvas = document.getElementById(canvasId);
+			var context = canvas.getContext("2d");
+			context.strokeStyle = '#000';
+			f(context);
 		};
-		var codes = $(".code");
-		codes.each(function(){
-			var lines = $("line", this).toArray().map(function(e){
+		var evaluateCode = function(t){
+			var f = new Function("inCanvas",t);
+			f.apply(null, [inCanvas]);
+		};
+		var getCodeInBlock = function(block){
+			return $("line", block).toArray().map(function(e){
 				var $e = $(e);
 				return $e.text()+"\r\n";
 			}).join("");
-			evaluateCode(lines);
+		};
+		var contexts = [];
+		var codes = $(".code");
+		codes.each(function(){
+			var $this = $(this);
+			var contextId = $this.data("contextid");
+			var code = getCodeInBlock($this);
+			var context = contexts.find(function(c){return c.id == contextId;});
+			if(context != null){
+				context.code += code;
+			}else{
+				contexts.push({
+					id:contextId,
+					code:code
+				});
+			}
+		});
+		contexts.map(function(c){
+			evaluateCode(c.code);
 		});
 	})(jQuery);
 </script>
