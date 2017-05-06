@@ -1,0 +1,15 @@
+{
+  "name": "outline",
+  "version": "1.0.0",
+  "description": "a library for creating and combining outlines of polygons",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emilefokkema/outline.git"
+  },
+  "devDependencies": {
+    "amdclean": "^2.7.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-requirejs": "^1.0.0"
+  }
+}

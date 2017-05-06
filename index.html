@@ -174,47 +174,51 @@
 	</div>
 	
 </body>
-<script src="outlineTest.js"></script>
-<script src="outline.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.3/require.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-	(function($){
-		window.outlineTest(function(e){console.error(e);}, function(s){console.info(s);});
-		var inCanvas = function(canvasId, f){
-			var canvas = document.getElementById(canvasId);
-			var context = canvas.getContext("2d");
-			context.strokeStyle = '#000';
-			f(context);
-		};
-		var evaluateCode = function(t){
-			var f = new Function("inCanvas",t);
-			f.apply(null, [inCanvas]);
-		};
-		var getCodeInBlock = function(block){
-			return $("line", block).toArray().map(function(e){
-				var $e = $(e);
-				return $e.text()+"\r\n";
-			}).join("");
-		};
-		var contexts = [];
-		var codes = $(".code");
-		codes.each(function(){
-			var $this = $(this);
-			var contextId = $this.data("contextid");
-			var code = getCodeInBlock($this);
-			var context = contexts.find(function(c){return c.id == contextId;});
-			if(context != null){
-				context.code += code;
-			}else{
-				contexts.push({
-					id:contextId,
-					code:code
-				});
-			}
-		});
-		contexts.map(function(c){
-			evaluateCode(c.code);
-		});
-	})(jQuery);
+	require.config({
+		baseUrl:"src/"
+	});
+	require(['outline'],function(){
+		(function($){
+			var inCanvas = function(canvasId, f){
+				var canvas = document.getElementById(canvasId);
+				var context = canvas.getContext("2d");
+				context.strokeStyle = '#000';
+				f(context);
+			};
+			var evaluateCode = function(t){
+				var f = new Function("inCanvas",t);
+				f.apply(null, [inCanvas]);
+			};
+			var getCodeInBlock = function(block){
+				return $("line", block).toArray().map(function(e){
+					var $e = $(e);
+					return $e.text()+"\r\n";
+				}).join("");
+			};
+			var contexts = [];
+			var codes = $(".code");
+			codes.each(function(){
+				var $this = $(this);
+				var contextId = $this.data("contextid");
+				var code = getCodeInBlock($this);
+				var context = contexts.find(function(c){return c.id == contextId;});
+				if(context != null){
+					context.code += code;
+				}else{
+					contexts.push({
+						id:contextId,
+						code:code
+					});
+				}
+			});
+			contexts.map(function(c){
+				evaluateCode(c.code);
+			});
+		})(jQuery);
+	});
+	
 </script>
 </html>
