@@ -44,7 +44,6 @@ requirejs([
 					}
 					catch(e){
 						logError("["+name+"] "+e.message);
-						throw e;
 					}
 					
 				};
